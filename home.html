@@ -190,11 +190,17 @@
   .page{
     margin-top: 3em;
   }
+<<<<<<< HEAD
   #spider-target > circle:nth-child(4){
     display: none;
   }
   #spider-target > path:nth-child(4){
     display: none;
+=======
+  .fa-check{
+    font-size:90%;
+    color:#C5F1FF;
+>>>>>>> 1c0b5e1d8012663a16f083729bc5e8eeb4e68503
   }
 </style>
 <body>
@@ -292,7 +298,10 @@ $("#trace").css("width",(windowWidth*.19));
 
 var selected_addr;
 //socket listeners ------------------------------
-var socket = io.connect('http://' + document.domain + ':' + location.port);
+var socket = function(){};
+socket["on"] = function(){};
+if (!TESTING)
+  socket = io.connect('http://' + document.domain + ':' + location.port);
 socket.on('connect', function() {
     console.log("connected")
     socket.emit('client_connected', {data: 'I\'m connected!'});
@@ -364,7 +373,7 @@ function showRulesElem(){
   document.getElementById("rules").style.display = "block";
   setTimeout(function(){ 
     document.getElementById("rules").style.display = "none";
-  }, 2000);
+  }, 700);
 }
 function showGraphsElem(){
   document.getElementById('device-list').style.display = "none";
@@ -395,6 +404,12 @@ function updateSavedDevicesElem(){
       a.href='javascript:connect("'+key+'");';
       a.innerHTML = devices[key];
       div.appendChild(a);
+
+      var checkmark = document.createElement("span");
+      checkmark.innerHTML = '&nbsp;<i style="display:none" class="fa fa-check" id="check_'+key+'"></i>'
+      
+      div.appendChild(checkmark);
+
       var settings = document.createElement("a");
       settings.href='javascript:settingsPressed("'+key+'");';
       settings.innerHTML = '<i class="fa fa-cogs device-cog"></i>';
@@ -422,11 +437,27 @@ function start(){
   showRulesElem();
 }
 function connect(address){
+  console.log(address);
+  var elems = document.getElementsByClassName("fa-check");
+  for (var i =0; i < elems.length; i++){ //hide all the check marks.
+    var elem = elems[i];
+    elem.style.display = 'none';
+  }
+  var elem = document.getElementById("check_"+address); //show a check mark next to the selected element.
+  elem.style.display = "inline-block";
+
   console.log("connect called");
   selected_addr = address;
-  socket.emit('connect_to_mantis', {name: address});
+  if (!TESTING)
+    socket.emit('connect_to_mantis', {name: address});
 }
+
 function scan(){
+  console.log("scanning");
+  if (TESTING){
+    saveDevice("mantis123", ""+(Math.floor(Math.random() * 10000000000)), false);
+    return;
+  }
   console.log("scan called");
   socket.emit('scan_for_mantis', {});
   updateConnectedWeaponElem("scan");
@@ -516,7 +547,7 @@ function sim_shot(){
     updateCharts();
     setTimeout(function(){ 
       sim_shot();
-    }, 1500);
+    }, 1200);
   }
 }
 
