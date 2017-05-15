@@ -190,6 +190,12 @@
   .page{
     margin-top: 3em;
   }
+  #spider-target > circle:nth-child(4){
+    display: none;
+  }
+  #spider-target > path:nth-child(4){
+    display: none;
+  }
 </style>
 <body>
 
@@ -270,16 +276,16 @@ var windowWidth = $(window).width();
 var windowHeight = $(window).height();
 var options = {
       spider_id: 'spider-target',
-      spider_width: 100,
+      spider_width: (windowWidth*.35),
       line_id: 'line-graph',
-      line_width: 100,
+      line_width: (windowWidth*.26),
       trace_id: 'trace',
-      trace_width: 100,
+      trace_width: (windowWidth*.19),
       backgroundColor: 'none',
       show_score_label: true,
     };
 
-//set responsive width of charts
+//set responsive width of charts this is also passed into optoins upon refresh render
 $("#spider-target").css("width",(windowWidth*.35));
 $("#line-graph").css("width",(windowWidth*.26));
 $("#trace").css("width",(windowWidth*.19));
@@ -335,7 +341,7 @@ function updateCharts(){
   GRAPHICS.drawSpiderTarget(shots, ""+average_score, options);
   GRAPHICS.drawLineGraph(shots, options);
   GRAPHICS.drawTraceview(options.trace_id, shots[shots.length-1], options);
-  //SVGtrace(150);
+  SVGtrace(150);
 }
 
 function updateStatusElem(status){
@@ -487,11 +493,11 @@ function SVGtrace(time){
       duration: time,
       animTimingFunction: Vivus.EASE_OUT
   });
-  new Vivus('trace', {
-      type: 'delayed',
-      duration: time,
-      animTimingFunction: Vivus.EASE_IN
-  });
+  // new Vivus('trace', {
+  //     type: 'delayed',
+  //     duration: time,
+  //     animTimingFunction: Vivus.EASE_IN
+  // });
 }
 
 updateSavedDevicesElem();

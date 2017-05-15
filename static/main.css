@@ -121,11 +121,6 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-.target-bg-1{
-    background: url(./img/target-1.svg);
-    background-size: cover;
-    background-repeat: no-repeat;
-}
 .target-bg-2{
     background: url(./img/target-2.svg);
     background-size: cover;

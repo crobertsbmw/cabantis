@@ -35,13 +35,14 @@ let config = {
     graphics: {
         DARKRED: "#C2272C",
         RED: "#DB061F",
+        WHITE: "#FFFFFF",
         DARKGRAY: "#C3C0B9",
         LIGHTGRAY: "rgba(0,0,0,0)",
         trace_point_radius: 1,
         trace_point_radius_focus: 3,
-        trace_path_width: 2,
+        trace_path_width: 3,
         trace_path_width_focus: 10,
-        font_family: 'Montserrat, Roboto, Arial'
+        font_family: 'DINCond-Bold, Roboto, Arial'
     },
     cutoffs: {
         great_shot_score: 95
@@ -163,7 +164,7 @@ let GRAPHICS = (function() {
             backgroundColor: 'none',
             textColor: 'black',
             axisColor: '#CACACA',
-            columnColor: config.graphics.DARKGRAY
+            columnColor: config.graphics.WHITE
         };
         var svg = document.getElementById(options.column_id);
         //svg.style['overflow'] = 'visible'; // display tooltips
@@ -423,7 +424,7 @@ let GRAPHICS = (function() {
      * @param {string} highlightColor - default config.graphics.RED
      */
     my.highlightColumn = function(session, defaultColor, highlightColor) {
-        defaultColor = defaultColor || config.graphics.DARKGRAY;
+        defaultColor = defaultColor || config.graphics.WHITE;
         highlightColor = highlightColor || config.graphics.RED;
         // Highlight column
         var cols = document.getElementsByClassName('chart-column');
@@ -456,8 +457,8 @@ let GRAPHICS = (function() {
      */
     my.drawLineGraph = function(shots, options) {
         let backgroundColor = options.backgroundColor || config.graphics.LIGHTGRAY;
-        let strokeColor = options.strokeColor || 'black';
-        let pointColor = options.pointColor || config.graphics.RED;
+        let strokeColor = options.strokeColor || '#494846';
+        let pointColor = options.pointColor || '#ffcb05';
         let average_score = (shots.length > 0 ? shots.reduce((a, b) => a+parseFloat(b.score), 0)/shots.length : 85);
         // let average_score = shots.reduce(function(a, b) {
         //     return a+parseFloat(b.score);
@@ -474,7 +475,7 @@ let GRAPHICS = (function() {
             let background = getBackground(backgroundColor);
             let rects = getShotRectangles(shots, options.trace_id, backgroundColor); // highlight on focus
             let dashed_average = getDashedAverage(average_score, strokeColor, 35+x_min, zoom);
-            let lines = getLines(shots, strokeColor, pointColor, zoom);
+            let lines = getLines(shots, '#ffffff', pointColor, zoom);
             let yAxis = getLineYAxis(strokeColor);
             let yAxisScores = getYAxisScores(shots, backgroundColor, strokeColor, zoom);
 
@@ -580,7 +581,7 @@ let GRAPHICS = (function() {
      * @returns {object} yaxis (SVG object)
      */
     function getLineYAxis(strokeColor) {
-        return getNode('line', { x1: 25, y1: 5, x2: 25, y2: 95, stroke: strokeColor, 'stroke-width': 2 });
+        return getNode('line', { x1: 25, y1: 5, x2: 25, y2: 95, stroke: strokeColor, 'stroke-width': .7 });
     }
 
     /**
@@ -624,7 +625,7 @@ let GRAPHICS = (function() {
                 'font-size': 8,
                 'font-weight': 'bold',
                 'font-family': config.graphics.font_family,
-                'fill': strokeColor
+                'fill': '#ffffff'
             });
             text.textContent = i;
             scores.appendChild(text);
@@ -652,7 +653,7 @@ let GRAPHICS = (function() {
                 let shot2y = yFromScore(zoom ? stretchScore(shots[i+1].score) : shots[i+1].score);
                 lines.appendChild(getNode('line', { x1: 10+30*(svgIndex+1), y1: shot1y, x2: 10+30*(svgIndex+2), y2: shot2y, stroke: strokeColor, 'pointer-events': 'none' }));
             }
-            lines.appendChild(getNode('circle', { cx: 10+30*(svgIndex+1), cy: shot1y, r: 2.5, stroke: strokeColor, 'stroke-width': 1, fill: pointColor, 'pointer-events': 'none' }));
+            lines.appendChild(getNode('circle', { cx: 10+30*(svgIndex+1), cy: shot1y, r: 2.5, stroke: strokeColor, 'stroke-width': .5, fill: pointColor, 'pointer-events': 'none' }));
         }
         return lines;
     }
@@ -693,11 +694,11 @@ let GRAPHICS = (function() {
      * @param {object[]} options
      */
     my.drawSpiderTarget = function(shots, score, options) {
-        let backgroundColor = options.backgroundColor || 'transparent';
+        let backgroundColor = options.backgroundColor || '#1b1b19';
         let innerCircleColor = options.innerCircleColor || backgroundColor;
         let targetBackgroundColor = options.targetBackgroundColor || config.graphics.LIGHTGRAY;
-        let strokeColor = options.strokeColor || config.graphics.DARKGRAY;
-        let textColor = options.textColor || 'black';
+        let strokeColor = options.strokeColor || config.graphics.WHITE;
+        let textColor = options.textColor || '#ffcb05';
         let svg = document.getElementById(options.spider_id);
         // Remove existing spiderchart, if it exists
          $('#'+options.spider_id).show().children().remove();
@@ -706,7 +707,7 @@ let GRAPHICS = (function() {
                 return count + (shot.score > config.cutoffs.great_shot_score ? 1 : 0);
             }, 0);
             let linear_gradient = get_linear_gradient();
-            let inner_circle = getInnerCircle(strokeColor, innerCircleColor, textColor, score, great_shot_count, options.show_score_label);
+            let inner_circle = getInnerCircle(strokeColor, innerCircleColor, textColor, score, great_shot_count, options.show_score_label, backgroundColor);
             let octants = draw_spider_octants(options.spider_id, shots, options);
 
             svg.appendChild(linear_gradient);
@@ -714,7 +715,7 @@ let GRAPHICS = (function() {
             // svg.appendChild(getNode('circle', { cx: 100, cy: 100, r: 80, stroke: strokeColor, 'stroke-width': 3, fill: targetBackgroundColor }));
             // Transparent inner circle
             svg.appendChild(getNode('circle', { cx: 100, cy: 100, r: 60, stroke: targetBackgroundColor, 'stroke-width': 40, fill: 'none'}));
-            svg.appendChild(getNode('circle', { cx: 100, cy: 100, r: 80, stroke: strokeColor, 'stroke-width': 3, fill: 'none'}))
+            svg.appendChild(getNode('circle', { cx: 100, cy: 100, r: 80, stroke: strokeColor, 'stroke-width': 1, fill: 'none'}))
             svg.appendChild(inner_circle);
             svg.appendChild(octants);
 
@@ -758,8 +759,8 @@ let GRAPHICS = (function() {
      */
     function getInnerCircle(strokeColor, backgroundColor, textColor, score, great_shot_count, show_score_label=false) {
         let inner_circle = getNode('g', { class: 'inner_circle' });
-        let circle = getNode('circle', { cx: 100, cy: 100, r: 40, stroke: strokeColor, 'stroke-width': 3, fill: backgroundColor });
-        let score_label = getNode('text', { x: 100, y: 85, 'text-anchor': 'middle', 'alignment-baseline': 'central', 'dominant-baseline': 'central', fill: textColor, 'font-size': 10, 'font-family': config.graphics.font_family })
+        let circle = getNode('circle', { cx: 100, cy: 100, r: 40, stroke: strokeColor, 'stroke-width': 1, fill: "#1b1b19" });
+        let score_label = getNode('text', { x: 100, y: 85, 'text-anchor': 'middle', 'alignment-baseline': 'central', 'dominant-baseline': 'central', fill: "#ffffff", 'font-size': 8, 'font-family': config.graphics.font_family })
         let text = getNode('text', { x: 100, y: 100, 'text-anchor': 'middle', 'alignment-baseline': 'central', 'dominant-baseline': 'central', fill: textColor, 'font-size': 27, 'font-family': config.graphics.font_family });
         let great_shots = getNode('g', { class: 'great_shots' });
         
@@ -933,8 +934,8 @@ let GRAPHICS = (function() {
         let p4 = {'x': cx + re*Math.cos(radians+Math.PI/4), 'y': cy - re*Math.sin(radians+Math.PI/4)};
         let d = "M " + point_to_string(p1) + "L " + point_to_string(p2) + "A " + rb + " " + rb + " 0 0 0 " + point_to_string(p3) + "L " + point_to_string(p4) + "A " + re + " " + re + " 0 0 1 " + point_to_string(p1) + "Z";
 
-        let path = getNode('path', { 'id': 'shot'+shot.pk, 'd': d, 'stroke': 'white', 'stroke-width': '1'})
-        path.style.fill = 'url(#grad1)'; //(pk === 1 ? 'red' : 'url(#grad1)');
+        let path = getNode('path', { 'id': 'shot'+shot.pk, 'd': d, 'stroke': '#494846', 'stroke-width': '.5'})
+        path.style.fill = '#ffcb05'; //(pk === 1 ? 'red' : 'url(#grad1)');
         path.classList.add("sector"+octantnumber);
         // Immediately Invoked Function Expression
         // because closures (functions inside a function) use variable reference, not variable value
@@ -1008,7 +1009,7 @@ let GRAPHICS = (function() {
     function highlight_octant(spider_id, shot_pk) {
         var chart = document.getElementById(spider_id);
         var arc = chart.getElementById('shot'+shot_pk);
-        arc.style.stroke = "black";
+        arc.style.stroke = "#ffffff";
         arc.parentElement.appendChild(arc);
 
         var sector = arc.className.baseVal;
@@ -1028,7 +1029,7 @@ let GRAPHICS = (function() {
     function unhighlight_octant(spider_id, shot_pk) {
         var chart = document.getElementById(spider_id);
         var arc = chart.getElementById('shot'+shot_pk);
-        arc.style.stroke = "white";
+        arc.style.stroke = "#494846";
         arc.parentElement.appendChild(arc);
 
         var sector = arc.className.baseVal;
@@ -1210,7 +1211,7 @@ let GRAPHICS = (function() {
                 $('#'+div_id)
                     .empty()
                     .css({ 
-                        'background-color': 'black',
+                        'background-color': 'none',
                         'width': options.trace_width
                     })
                     .show();
@@ -1244,9 +1245,9 @@ let GRAPHICS = (function() {
                 'y1': y1,
                 'x2': x2,
                 'y2': y2,
-                'stroke-width': 2,
+                'stroke-width': .5,
                 'vector-effect': 'non-scaling-stroke',
-                'stroke': 'white'
+                'stroke': '#494846'
             });
         }
 
@@ -1262,10 +1263,10 @@ let GRAPHICS = (function() {
                 'r': (begin+i*inc)*scale, 
                 'cx': 50, 
                 'cy': 50, 
-                'stroke': config.graphics.RED, 
-                'stroke-width': 2, 
+                'stroke': config.graphics.WHITE, 
+                'stroke-width': 1, 
                 'vector-effect': 'non-scaling-stroke', 
-                'stroke-opacity': .1*(10-i),
+                // 'stroke-opacity': .1*(10-i),
                 'fill': 'none'
             }));
         }
@@ -1290,7 +1291,7 @@ let GRAPHICS = (function() {
         var g = getNode('g', {});
         if (typeof options.opacity === 'undefined') { options.opacity = 1; }
         if (typeof options.showpoints === 'undefined') { options.showpoints = true; }
-        if (typeof options.showtext === 'undefined') { options.showtext = true; }
+        if (typeof options.showtext === 'undefined') { options.showtext = false; }
 
         let pointa = mapPitchAndYawToPoint(shot, center, 0);
         let point0 = mapPitchAndYawToPoint(shot, center, 0);
@@ -1307,7 +1308,7 @@ let GRAPHICS = (function() {
 
             var d = bezier_curve(pointa, point0, point1, point2, bezier_scale);
 
-            var fillcolor = (typeof options.color !== 'undefined' ? options.color : (i < shot.pull_index ? '#33cc33' : (i < shot.shot_index ? 'yellow' : 'red')));
+            var fillcolor = (typeof options.color !== 'undefined' ? options.color : (i < shot.pull_index ? '#c5f1fe' : (i < shot.shot_index ? '#ffcb05' : '#ffffff')));
             if(options.showpoints) {
                 let circle = getNode('circle', { 'class': 'traceview__point', 'cx': point1.x, 'cy': point1.y, 'r': config.graphics.trace_point_radius, 'fill': fillcolor, 'opacity': options.opacity });
                 g.appendChild(circle);
