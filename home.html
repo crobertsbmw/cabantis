@@ -19,6 +19,16 @@
     font-family:"DINCond-Bold";
     src: url(static/fonts/DIN/DINPro-CondBold.otf) format("opentype");
   }
+  @font-face{
+    font-family:"HelveticaBold";
+    src: url(static/fonts/Helvetica/HelveticaNeueBold.ttf) format("truetype");
+  }
+  @font-face{
+    font-family:"HelveticaLight";
+    src: url(static/fonts/Helvetica/HelveticaNeueLight.ttf) format("truetype");
+  }
+  
+
   
   /* The Modal (background) */
 .modal {
@@ -32,24 +42,6 @@
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-#rules {
-    display:none; 
-    position: fixed; /* Stay in place */
-    z-index: 3; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
-}
-#rules .content{
-  position:relative;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 30px;
 }
 
 /* Modal Content/Box */
@@ -90,7 +82,9 @@
       flex-direction: row;
     }
   }
-  
+  .chart{
+    width:442px;
+  }
   #footer{
     z-index: 2;
     height:95px;
@@ -140,6 +134,7 @@
   #connected-weapon, .status{
     position:relative;
     z-index: 4;
+    margin-bottom:10px;
   }
 
   .status{
@@ -156,7 +151,7 @@
     border:2px solid;
     border-radius: 15px;
     display: inline-block;
-    margin-top:3em;
+    margin-top:17px;
     padding: .2em 3em .2em 3em;
   }
   .start-btn{
@@ -187,8 +182,18 @@
     margin-top:1.5em;
     margin-bottom:1.5em;
   }
+  #spider-target{
+    width: 445px;
+  }
+  #line-graph{
+    width: 400px;
+  }
+  #trace{
+    width: 255px;
+  }
+
   .page{
-    margin-top: 3em;
+    margin-top: 30px;
   }
   #spider-target > circle:nth-child(4){
     display: none;
@@ -200,6 +205,73 @@
     font-size:90%;
     color:#C5F1FF;height: 
   }
+  .small-button{
+    color:#fff;
+    font-family: "DINCond-Bold", sans-serif;
+    font-size:20px;
+    line-height: 24px;
+  }
+  .shot-num{
+    font-family: "HelveticaBold", sans-serif;
+    font-size:30px;
+  }
+  #shot-counter-label{
+    position:absolute;
+    left:0px;
+    top:22px;
+  }
+  #reset-btn{
+    position:absolute;
+    right:0px;
+    top:22px;
+  }
+  #possible-cause{
+    border-left: 1px solid #ffcb04;
+    border-right: 1px solid #ffcb04;
+    font-family: "LeagueGothic-Regular", sans-serif;
+    display:none;
+    font-size:30px;
+    padding:5 50px;
+  }
+  #tip{
+    font-family: "HelveticaLight", sans-serif;
+    font-size:14px;
+    color:#bbb;
+    text-transform: none;
+    margin-top: 7px;
+  }
+  #rules {
+    display:none;
+    position: fixed; /* Stay in place */
+    z-index: 3; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
+}
+#rules .content{
+  position:relative;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 30px;
+  display:flex;
+  justify-content: center;
+}
+.rule{
+  text-align: left;
+  width:320px;
+  margin:20px;
+  font-size:16px;
+  display:flex;
+  align-items:center;
+}
+.rule img{
+  width:70px;
+  margin:20px;
+}
 </style>
 <body>
 
@@ -215,9 +287,19 @@
 
 <div id="rules">
   <div class="content">
-  Always Keep The gun Pointed in a safe direction<br>
-  ALWAYS KEEP YOUR FINGER OFF THE TRIGGER UNTIL READY TO SHOOT<br>
-  ALWAYS KEEP THE GUN UNLOADED UNTIL READY TO USE<br>
+    <span class="rule">
+      <img src="static/img/gun_pointed_icon.svg">
+      Always Keep The gun Pointed in a safe direction
+    </span>
+    <span class="rule">
+      <img src="static/img/trigger_icon.svg">  
+      ALWAYS KEEP YOUR FINGER OFF THE TRIGGER UNTIL READY TO SHOOT
+    </span>
+    <span class="rule">
+      <img src="static/img/unloaded_icon.svg">
+      ALWAYS KEEP THE GUN UNLOADED UNTIL READY TO USE<br>
+    </span>
+
   </div>
 </div>
 
@@ -242,31 +324,51 @@
 </div>
 
 <div class="page" id="dashboard">
-    <div id="container">
-        <div class="row">
-            <div id="graph-section" class="col xxl">
-                <div class="card session-detail">
-                    <div class="chart-holder full-chart">
-                        <div class="chart">
-                            <svg id="trace" width="100%" viewBox = "0 0 100 100" class="target-bg-1"></svg>
-                        </div>
-                    </div>
-                    <div class="chart-holder full-chart">
-                        <div class="chart">
-                            <svg id="spider-target" width="100%" viewBox="0 0 200 200" class="target-bg-2">
-                              <g id="spider-target_g"></g>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="chart-holder full-chart">
-                        <div class="chart">
-                            <svg id="line-graph"  width="100%" viewBox = "0 0 200 100"></svg>
-                        </div>
-                    </div>
-                </div>
+  <div id="container">
+    <div class="row">  
+      <div id="graph-section" class="col xxl">
+        <div class="card session-detail">
+          <div class="chart-holder full-chart">
+            <div class="chart">
+              <svg id="trace" width="100%" viewBox = "0 0 100 100" class="target-bg-1"></svg>
             </div>
+            <!--1 2 3 -->
+          </div>
+          <div class="chart-holder full-chart">
+            <div class="chart">
+              <div class="small-button" id="shot-counter-label">
+                SHOTS
+                <div class="shot-num yellow" id="shots-counter">0</div>
+              </div>
+              <a href="javascript:reset()">
+                <div class="small-button" id="reset-btn">
+                  RESET
+                  <div class="yellow" style="margin-top:5px;">
+                    <i class="fa fa-refresh" aria-hidden="true"></i>
+                  </div>
+                </div>
+              </a>
+              <svg id="spider-target" width="100%" viewBox="0 0 200 200" class="target-bg-2">
+                <g id="spider-target_g"></g>
+              </svg>
+            </div>
+          </div>
+          <div class="chart-holder full-chart">
+            <div class="chart">
+              <svg id="line-graph"  width="100%" viewBox = "0 0 200 100"></svg>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
+</div>
+<div id="possible-cause">
+  POSSIBLE CAUSE:
+</div>
+<div id="tip">
+</div>
+
 </main>
 </body>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
@@ -280,19 +382,17 @@ var windowWidth = $(window).width();
 var windowHeight = $(window).height();
 var options = {
       spider_id: 'spider-target',
-      spider_width: (windowWidth*.35),
+      spider_width: 445,
       line_id: 'line-graph',
-      line_width: (windowWidth*.26),
+      line_width: 400,
       trace_id: 'trace',
-      trace_width: (windowWidth*.19),
+      trace_width: 255,
       backgroundColor: 'none',
       show_score_label: true,
     };
 
 //set responsive width of charts this is also passed into optoins upon refresh render
-$("#spider-target").css("width",(windowWidth*.35));
-$("#line-graph").css("width",(windowWidth*.26));
-$("#trace").css("width",(windowWidth*.19));
+
 
 var selected_addr;
 //socket listeners ------------------------------
@@ -301,26 +401,24 @@ socket["on"] = function(){};
 if (!TESTING)
   socket = io.connect('http://' + document.domain + ':' + location.port);
 socket.on('connect', function() {
-    console.log("connected")
     socket.emit('client_connected', {data: 'I\'m connected!'});
 });
 socket.on('mantis_connected', function(data) {
-    var addr = data["mantis_address"];
+    selected_addr = data["mantis_address"];
     updateStatusElem("Connected");
-    //TODO: show rules
-    updateConnectedWeaponElem(addr);
+    updateConnectedWeaponElem(selected_addr);
+    var elem = document.getElementById("check_"+selected_addr); //show a check mark next to the selected element.
+    elem.style.display = "inline-block";
 });
 socket.on('did_detect_shot', function(shot) {
     shots.push(shot);
     updateCharts();
 });
 socket.on('disconnect', function() {
-    console.log("server disconnected");
     socket.emit('my event', {data: "I'm connected!"});
     updateSavedDevicesElem();
 });
 socket.on('did_update_status', function(data) {
-  console.log(data)
   updateStatusElem(data["code"]);
   if (data["code"] == "Disconnected" || data["code"] == "Unable to Connect"){
     showDevices();
@@ -337,41 +435,70 @@ socket.on('did_update_status', function(data) {
 
 //update display ------------------
 function updateCharts(){
-  var average_score = 0.0;
-  for (var i in shots){
-    average_score += parseFloat(shots[i].score);
-    console.log(shots[i].score);
-  }
-  average_score = average_score / shots.length;
-  console.log(shots.length);
-  console.log("--------");
-  GRAPHICS.drawSpiderTarget(shots, ""+average_score, options);
+  document.getElementById("shots-counter").textContent = shots.length;
+  var shot = shots[shots.length-1];
+  GRAPHICS.drawSpiderTarget(shots, ""+shot.score, options);
   GRAPHICS.drawLineGraph(shots, options);
-  GRAPHICS.drawTraceview(options.trace_id, shots[shots.length-1], options);
-  SVGtrace(150);
+  GRAPHICS.drawTraceview(options.trace_id, shot, options);
+  updateWithShot(shot);
+}
+
+var average_timeout;
+function updateWithShot(shot){
+  clearTimeout(average_timeout);
+  var possible_cause = quadrantToProblemString(shot.quadrant, true);
+  var t = tip(possible_cause);
+  if (possible_cause != "GREAT SHOT"){
+    possible_cause = "POSSIBLE CAUSE: "+possible_cause;
+  }
+  document.getElementById('possible-cause').textContent = possible_cause;
+  document.getElementById('possible-cause').style.display = "inline-block";
+  document.getElementById('tip').textContent = t;
+  document.getElementById('tip').style.display = "block";
+  document.getElementById("score_label").textContent = "SCORE";
+  document.getElementById("score_field").textContent = MANAGER.round(shot.score);
+  average_timeout = setTimeout(function(){ 
+    var average_score = 0.0;
+        for (var i in shots){
+          average_score += parseFloat(shots[i].score);
+        }
+        average_score = average_score / shots.length;
+      
+      var score_label = document.getElementById("score_label");
+      $(score_label).fadeOut(400, function(){
+        score_label.textContent = "AVERAGE SCORE";
+        $(score_label).fadeIn(400);
+      });
+      var score_field = document.getElementById("score_field");
+      $(score_field).fadeOut(400, function(){
+        score_field.textContent = MANAGER.round(average_score);
+        $(score_field).fadeIn(400);
+      });
+  }, 3500);
 }
 
 function updateStatusElem(status){
   var e = document.getElementById('status');
-  console.log("udpate status");
   if(status == "Connected" || status == "Calibrated"){
-    e.innerHTML = "CONNECTED";
+    e.textContent = "CONNECTED";
   }else{
-    e.innerHTML = status;
+    e.textContent = status;
   }
   if(status == "Connected" || status == "Calibrated" || status == "Calibrating"){
     e.classList.add("yellow");
   }else{
     e.classList.remove("yellow");
   }
-  console.log(e.innerHTML);
 }
 
 function showRulesElem(){
+  var name = document.getElementById("connected-weapon").textContent;
+  document.getElementById("connected-weapon").textContent = "RULES OF ENGAGEMENT"
   document.getElementById("rules").style.display = "block";
   setTimeout(function(){ 
     document.getElementById("rules").style.display = "none";
-  }, 700);
+    document.getElementById("connected-weapon").textContent = name;
+  }, 2000);
 }
 function showGraphsElem(){
   document.getElementById('device-list').style.display = "none";
@@ -380,14 +507,16 @@ function showGraphsElem(){
   document.getElementById('connect-new-btn').style.display = "none";
   GRAPHICS.drawSpiderTarget([], "00", options);
   GRAPHICS.drawLineGraph([], { line_id: 'line-graph' });
-  console.log("show graphs");
+  reset();
+  //document.getElementById("spider-target").style.width="445px";
 }
 function showDevices(){
-  console.log("show devices");
   document.getElementById('dashboard').style.display = "none";
   document.getElementById('device-list').style.display = "inline-block";
   document.getElementById('select-new-btn').style.display = "none";
   document.getElementById('connect-new-btn').style.display = "inline-block";
+  document.getElementById('possible-cause').style.display = "none";
+  document.getElementById('tip').style.display = "none";
 }
 
 function updateSavedDevicesElem(){
@@ -400,7 +529,7 @@ function updateSavedDevicesElem(){
 
       var a = document.createElement("a");
       a.href='javascript:connect("'+key+'");';
-      a.innerHTML = devices[key];
+      a.textContent = devices[key];
       div.appendChild(a);
 
       var checkmark = document.createElement("span");
@@ -419,8 +548,8 @@ function updateSavedDevicesElem(){
 function updateConnectedWeaponElem(addr){
     var devices = getSavedDevices();
     var name = devices[addr];
-    if (!name) document.getElementById("connected-weapon").innerHTML = "CHOOSE FIREARM";
-    else document.getElementById("connected-weapon").innerHTML = name.trim();
+    if (!name) document.getElementById("connected-weapon").textContent = "CHOOSE FIREARM";
+    else document.getElementById("connected-weapon").textContent = name.trim();
 }
 
 //click listeners -----------------------
@@ -435,7 +564,6 @@ function start(){
   showRulesElem();
 }
 function connect(address){
-  console.log(address);
   var elems = document.getElementsByClassName("fa-check");
   for (var i =0; i < elems.length; i++){ //hide all the check marks.
     var elem = elems[i];
@@ -444,19 +572,16 @@ function connect(address){
   var elem = document.getElementById("check_"+address); //show a check mark next to the selected element.
   elem.style.display = "inline-block";
 
-  console.log("connect called");
   selected_addr = address;
   if (!TESTING)
     socket.emit('connect_to_mantis', {name: address});
 }
 
 function scan(){
-  console.log("scanning");
   if (TESTING){
     saveDevice("mantis123", ""+(Math.floor(Math.random() * 10000000000)), false);
     return;
   }
-  console.log("scan called");
   socket.emit('scan_for_mantis', {});
   updateConnectedWeaponElem("scan");
 }
@@ -490,11 +615,14 @@ function forgetDevice(){
   updateSavedDevicesElem();
 }
 
-function newSession(){
+function reset(){
   shots = [];
-  document.getElementById('spider-target').innerHTML = "";
-  document.getElementById('line-graph').innerHTML = "";
   document.getElementById('trace').innerHTML = "";
+  GRAPHICS.drawSpiderTarget([], "00", options);
+  GRAPHICS.drawLineGraph([], { line_id: 'line-graph' });
+  document.getElementById("shots-counter").textContent = "0";
+  document.getElementById('possible-cause').style.display = "none";
+  document.getElementById('tip').style.display = "none";
 }
 
 
@@ -522,11 +650,6 @@ function SVGtrace(time){
       duration: time,
       animTimingFunction: Vivus.EASE_OUT
   });
-  // new Vivus('trace', {
-  //     type: 'delayed',
-  //     duration: time,
-  //     animTimingFunction: Vivus.EASE_IN
-  // });
 }
 
 updateSavedDevicesElem();
@@ -549,4 +672,42 @@ function sim_shot(){
   }
 }
 
+
+function quadrantToProblemString(quad, right){
+  if (!quad) return "GREAT SHOT";
+  if (quad == "north") return "BREAKING WRIST UP";
+  if (quad == "south") return "PUSHING FORWARD";
+  if (right){
+    if (quad == "east") return "TOO MUCH TRIGGER FINGER";
+    if (quad == "northeast") return "ANTICIPATING RECOIL";
+    if (quad == "northwest") return "NO FOLLOW THROUGH";
+    if (quad == "west") return "TOO LITTLE TRIGGER FINGER";
+    if (quad == "southwest-up") return "TIGHTENING FINGERS";
+    if (quad == "southwest-down") return "SLAPPING THE TRIGGER";
+    if (quad == "southeast-up") return "TIGHTENING GRIP";
+    if (quad == "southeast-down") return "TIGHTENING GRIP";
+  }else{
+    if (quad == "west") return "TOO MUCH TRIGGER FINGER";
+    if (quad == "northwest") return "ANTICIPATING RECOIL";
+    if (quad == "northeast") return "NO FOLLOW THROUGH";
+    if (quad == "east") return "TOO LITTLE TRIGGER FINGER";
+    if (quad == "southeast-up") return "TIGHTENING FINGERS";
+    if (quad == "southeast-down") return "SLAPPING THE TRIGGER";
+    if (quad == "southwest-up") return "TIGHTENING GRIP";
+    if (quad == "southwest-down") return "TIGHTENING GRIP";
+  }
+  return "ERROR";
+}
+function tip(prob){
+  if("BREAKING WRIST UP" == prob) return "Keep both wrists locked and straight.";
+  if("PUSHING FORWARD" == prob) return "Lock your dominant arm while keeping your shoulders fixed, and torso immovable.";
+  if("TOO MUCH TRIGGER FINGER" == prob) return "Make sure the trigger is on the center of your finger pad.";
+  if("ANTICIPATING RECOIL" == prob) return "Squeeze the trigger more slowly.";
+  if("NO FOLLOW THROUGH" == prob) return "Squeeze the trigger slowly and remain aiming at the target for a half second after the shot.";
+  if("TOO LITTLE TRIGGER FINGER" == prob) return "Make sure the trigger is on the center of your finger pad.";
+  if("TIGHTENING FINGERS" == prob) return "Try relaxing your grip slightly.";
+  if("SLAPPING THE TRIGGER" == prob) return "Squeeze the trigger slowly, steadily, and directly backward.";
+  if("TIGHTENING GRIP" == prob) return "Keep a consistent grip and resist the temptation to  tighten your grip while pulling the trigger.";
+  return "";
+}
 </script>

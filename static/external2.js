@@ -42,7 +42,8 @@ let config = {
         trace_point_radius_focus: 3,
         trace_path_width: 3,
         trace_path_width_focus: 10,
-        font_family: 'DINCond-Bold, Roboto, Arial'
+        font_family: 'DINCond-Bold, Roboto, Arial',
+        score_font: 'HelveticaBold, Roboto, Arial'
     },
     cutoffs: {
         great_shot_score: 95
@@ -553,7 +554,8 @@ let GRAPHICS = (function() {
      * @returns {object} rect (SVG object)
      */
     function getShotRectangle(x, y, width, height, defaultColor, focusColor, shot, trace_id) {
-        var shotRect = getNode('rect', { x: x, y: y, width: width, height: height, fill: defaultColor });
+        console.log("get shot rexc")
+        var shotRect = getNode('rect', { id:"rect_"+shot.rand, x: x, y: y, width: width, height: height, fill: defaultColor });
         shotRect.addEventListener('mouseover', function() {
             this.style.fill = focusColor;
         });
@@ -567,6 +569,7 @@ let GRAPHICS = (function() {
         shotRect.addEventListener("click", function() {
                 var width = $('#'+trace_id).css('width');
                 my.drawTraceview(trace_id, shot, {'trace_width': width});
+                //updateWithShot(shot);
                 window.event.cancelBubble = true;
         });
         return shotRect;
@@ -760,8 +763,8 @@ let GRAPHICS = (function() {
     function getInnerCircle(strokeColor, backgroundColor, textColor, score, great_shot_count, show_score_label=false) {
         let inner_circle = getNode('g', { class: 'inner_circle' });
         let circle = getNode('circle', { cx: 100, cy: 100, r: 40, stroke: strokeColor, 'stroke-width': 1, fill: "#1b1b19" });
-        let score_label = getNode('text', { x: 100, y: 85, 'text-anchor': 'middle', 'alignment-baseline': 'central', 'dominant-baseline': 'central', fill: "#ffffff", 'font-size': 8, 'font-family': config.graphics.font_family })
-        let text = getNode('text', { x: 100, y: 100, 'text-anchor': 'middle', 'alignment-baseline': 'central', 'dominant-baseline': 'central', fill: textColor, 'font-size': 27, 'font-family': config.graphics.font_family });
+        let score_label = getNode('text', { id:"score_label", x: 100, y: 85, 'text-anchor': 'middle', 'alignment-baseline': 'central', 'dominant-baseline': 'central', fill: "#ffffff", 'font-size': 8, 'font-family': config.graphics.font_family })
+        let text = getNode('text', { id:"score_field", x: 100, y: 100, 'text-anchor': 'middle', 'alignment-baseline': 'central', 'dominant-baseline': 'central', fill: textColor, 'font-size': 27, 'font-family': config.graphics.score_font });
         let great_shots = getNode('g', { class: 'great_shots' });
         
         let radius = 32;
@@ -942,12 +945,12 @@ let GRAPHICS = (function() {
 
         let id = options.spider_id;
         let pk = shot.pk;
-        path.addEventListener("mouseover", (function(id, pk) {
-            return () => highlight_octant(id, pk);
-        }(options.spider_id, shot.pk))); 
-        path.addEventListener("mouseout", (function(id, pk) { 
-            return () => unhighlight_octant(id, pk);
-        }(options.spider_id, shot.pk)));
+        // path.addEventListener("mouseover", (function(id, pk) {
+        //     return () => highlight_octant(id, pk);
+        // }(options.spider_id, shot.pk))); 
+        // path.addEventListener("mouseout", (function(id, pk) { 
+        //     return () => unhighlight_octant(id, pk);
+        // }(options.spider_id, shot.pk)));
         path.addEventListener("click", function(options, shot){
             return function() {
                 if(options.url) {
@@ -957,6 +960,7 @@ let GRAPHICS = (function() {
                     let width = $('#'+options.trace_id).css('width');
                     my.drawTraceview(options.trace_id, shot, {'trace_width': width});
                     window.event.cancelBubble = true;
+                    updateWithShot(shot);
                 }
 
             };
