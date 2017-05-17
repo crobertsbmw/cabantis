@@ -83,7 +83,7 @@
     }
   }
   .chart{
-    width:442px;
+
   }
   #footer{
     z-index: 2;
@@ -216,14 +216,14 @@
     font-size:30px;
   }
   #shot-counter-label{
-    position:absolute;
-    left:0px;
-    top:22px;
+    position: absolute;
+    top:25px;
+    left: 0px;
   }
   #reset-btn{
-    position:absolute;
-    right:0px;
-    top:22px;
+    position: absolute;
+    top:25px;
+    right: 0px;
   }
   #possible-cause{
     border-left: 1px solid #ffcb04;
@@ -335,7 +335,6 @@
             <!--1 2 3 -->
           </div>
           <div class="chart-holder full-chart">
-            <div class="chart">
               <div class="small-button" id="shot-counter-label">
                 SHOTS
                 <div class="shot-num yellow" id="shots-counter">0</div>
@@ -348,6 +347,7 @@
                   </div>
                 </div>
               </a>
+            <div class="chart">
               <svg id="spider-target" width="100%" viewBox="0 0 200 200" class="target-bg-2">
                 <g id="spider-target_g"></g>
               </svg>
@@ -382,17 +382,19 @@ var windowWidth = $(window).width();
 var windowHeight = $(window).height();
 var options = {
       spider_id: 'spider-target',
-      spider_width: 445,
+      spider_width: (windowWidth*.24),
       line_id: 'line-graph',
-      line_width: 400,
+      line_width: (windowWidth*.22),
       trace_id: 'trace',
-      trace_width: 255,
+      trace_width: (windowWidth*.15),
       backgroundColor: 'none',
       show_score_label: true,
     };
 
 //set responsive width of charts this is also passed into optoins upon refresh render
-
+$("#spider-target").css("width",(windowWidth*.24));
+$("#line-graph").css("width",(windowWidth*.22));
+$("#trace").css("width",(windowWidth*.15));
 
 var selected_addr;
 //socket listeners ------------------------------
